@@ -10,7 +10,7 @@ driver = webdriver.ChromiumEdge(options=options)
 print("Chrome Headless Browser Invoked")
 t = time.localtime()
 verbose = True
-genres = ["Action", "Adventure", "Animation", "Biography", "Comedy", "Crime", "Drama", "Family", "Fantasy", "Film-Noir", "Game-Show", "History", "Horror", "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western"]
+genres = ["Action", "Adventure", "Animation", "Biography", "Comedy", "Crime", "Drama", "Family", "Fantasy", "Film-Noir", "History", "Horror", "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western"]
 
 # Create a logger function
 def log(a):
@@ -23,10 +23,10 @@ def log(a):
     if verbose:
         print(f"[{time.strftime('%H:%M:%S', t)}] : {a}")
     if os.path.exists("log.txt"):
-        with open("log.txt", "a") as file:
+        with open("log.txt", "a", encoding="utf-8") as file:
             file.write(f"[{time.strftime('%H:%M:%S', t)}] : {a}\n")
     else:
-        with open("log.txt", "w") as file:
+        with open("log.txt", "w", encoding="utf-8") as file:
             file.write(f"[{time.strftime('%H:%M:%S', t)}] : {a}\n")
 
 def get_data(genres, driver):
@@ -35,20 +35,19 @@ def get_data(genres, driver):
         log(f"Getting data for {genre}")
         driver.get(f"https://www.imdb.com/search/title/?title_type=feature&genres={genre}%2C%21documentary%2C%21short")
         for i in range(1, 51):
-            name = driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div.sc-d80c3c78-3.gqHsYK > div.sc-b0691f29-0.jbYPfh > div.ipc-title.ipc-title--base.ipc-title--title.ipc-title-link-no-icon.ipc-title--on-textPrimary.sc-b0691f29-9.klOwFB.dli-title > a > h3").text
+            name = driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div.sc-b0691f29-0.jbYPfh > div.ipc-title.ipc-title--base.ipc-title--title.ipc-title-link-no-icon.ipc-title--on-textPrimary.sc-b0691f29-9.klOwFB.dli-title > a > h3").text
             name = re.sub(r".*.\..", "", name)
             try:
                 data[name] = {
-                    "year": driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div.sc-d80c3c78-3.gqHsYK > div.sc-b0691f29-0.jbYPfh > div.sc-b0691f29-7.hrgukm.dli-title-metadata > span:nth-child(1)").text
+                    "year": driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div.sc-b0691f29-0.jbYPfh > div.sc-b0691f29-7.hrgukm.dli-title-metadata > span:nth-child(1)").text
                 }
             except:
-                data[name]["year"] = {
-                    "year": "0"
-                }
-            try:
-                data[name]["rating"] = driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div.sc-d80c3c78-3.gqHsYK > div.sc-b0691f29-0.jbYPfh > span > div > span").text
-            except:
-                data[name]["rating"] = "0.0"
+                data[name] = {"year": "0"}
+            
+            # try:
+                data[name]["rating"] = float(re.sub(r"\\n.*", "", driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div.sc-b0691f29-0.jbYPfh > span > div > span").text).replace(",", "."))
+            # except:
+            #     data[name]["rating"] = 0.0
             if "genres" in data[name]:
                 data[name]["genres"].append(genre)
             else:
