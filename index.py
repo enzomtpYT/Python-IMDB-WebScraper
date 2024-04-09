@@ -44,10 +44,15 @@ def get_data(genres, driver):
             except:
                 data[name] = {"year": "0"}
             
-            # try:
-                data[name]["rating"] = float(re.sub(r"\\n.*", "", driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div.sc-b0691f29-0.jbYPfh > span > div > span").text).replace(",", "."))
-            # except:
-            #     data[name]["rating"] = 0.0
+            try:
+                r = str(driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div.sc-b0691f29-0.jbYPfh > span > div > span").text)
+            except:
+                r = "0"
+            m = re.search(r"(\d+\,\d+)", r)
+            if m:
+                data[name]["rating"] = m.group(1).replace(",", ".")
+            else:
+                data[name]["rating"] = 0.0
             if "genres" in data[name]:
                 data[name]["genres"].append(genre)
             else:
