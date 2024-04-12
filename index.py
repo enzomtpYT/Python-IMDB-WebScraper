@@ -30,8 +30,8 @@ def log(a):
             file.write(f"[{time.strftime('%H:%M:%S', t)}] : {a}\n")
 
 def get_data(genres, driver):
-    data = {}
     for genre in genres:
+        data = {}
         log(f"Getting data for {genre}")
         driver.get(f"https://www.imdb.com/search/title/?title_type=feature&genres={genre}%2C%21documentary%2C%21short")
         for i in range(1, 51):
@@ -58,7 +58,7 @@ def get_data(genres, driver):
             else:
                 data[name]["genres"] = [genre]
             log(f"{name} : {data[name]}")
-    datas.append(data)
+        datas.append(data)
 
 get_data(genres, driver)
 driver.quit()
