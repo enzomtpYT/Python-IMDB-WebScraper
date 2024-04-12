@@ -35,17 +35,17 @@ def get_data(genres, driver):
         log(f"Getting data for {genre}")
         driver.get(f"https://www.imdb.com/search/title/?title_type=feature&genres={genre}%2C%21documentary%2C%21short")
         for i in range(1, 51):
-            name = driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div.sc-b0691f29-0.jbYPfh > div.ipc-title.ipc-title--base.ipc-title--title.ipc-title-link-no-icon.ipc-title--on-textPrimary.sc-b0691f29-9.klOwFB.dli-title > a > h3").text
+            name = driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div > div.dli-title > a > h3").text
             name = re.sub(r".*.\..", "", name)
             try:
                 data[name] = {
-                    "year": driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div.sc-b0691f29-0.jbYPfh > div.sc-b0691f29-7.hrgukm.dli-title-metadata > span:nth-child(1)").text
+                    "year": driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div > div.dli-title-metadata > span:nth-child(1)").text
                 }
             except:
                 data[name] = {"year": "0"}
             
             try:
-                r = str(driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div.sc-b0691f29-0.jbYPfh > span > div > span").text)
+                r = str(driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div > span > div > span").text)
             except:
                 r = "0"
             m = re.search(r"(\d+\,\d+)", r)
