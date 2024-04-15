@@ -3,9 +3,9 @@ from selenium.webdriver.firefox.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 import time, json, re, os
 
+# Setup all the necessary variables
 datas = []
 options = ChromeOptions()
-# options.add_argument("--headless")
 driver = webdriver.ChromiumEdge(options=options)
 print("Chrome Headless Browser Invoked")
 t = time.localtime()
@@ -15,11 +15,15 @@ genres = ["Action", "Adventure", "Animation", "Biography", "Comedy", "Crime", "D
 # Create a logger function
 def log(a):
     """
-    A function that logs a message if verbose is True. 
-    If the log file exists, the message is appended to the file with a timestamp.
+    Logs the given message to the console and a log file.
+
     Parameters:
-        a (str): The message to be logged.
+    a (str): The message to be logged.
+
+    Returns:
+    None
     """
+    # Your code here
     if verbose:
         print(f"[{time.strftime('%H:%M:%S', t)}] : {a}")
     if os.path.exists("log.txt"):
@@ -30,6 +34,16 @@ def log(a):
             file.write(f"[{time.strftime('%H:%M:%S', t)}] : {a}\n")
 
 def get_data(genres, driver):
+    """
+    Retrieves data for movies based on the given genres using the provided driver.
+
+    Args:
+        genres (list): A list of genres to search for.
+        driver: The driver object used for web scraping.
+
+    Returns:
+        list: A list of dictionaries containing movie data for each genre.
+    """
     for genre in genres:
         data = {}
         log(f"Getting data for {genre}")
@@ -38,9 +52,7 @@ def get_data(genres, driver):
             name = driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div > div.dli-title > a > h3").text
             name = re.sub(r".*.\..", "", name)
             try:
-                data[name] = {
-                    "year": driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div > div.dli-title-metadata > span:nth-child(1)").text
-                }
+                data[name] = {"year": driver.find_element(By.CSS_SELECTOR, f"li:nth-child({i}) > div > div > div > div > div > div.dli-title-metadata > span:nth-child(1)").text}
             except:
                 data[name] = {"year": "0"}
             
